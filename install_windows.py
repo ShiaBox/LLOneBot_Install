@@ -259,16 +259,15 @@ def download_and_install_plugin_llonebot(file_path):
         # 创建目标文件夹
         os.makedirs(plugin_path, exist_ok=True)
         print(
-            f"Moving from: {os.path.join(temp_dir, 'LLOneBot', 'LLOneBot-master')}")
+            f"Moving from: {os.path.join(temp_dir, 'LLOneBot')}")
         print(f"Moving to: {existing_destination_path2}")
         shutil.move(
-            os.path.join(temp_dir, 'LLOneBot', 'LLOneBot-master'),
+            os.path.join(temp_dir, 'LLOneBot'),
             plugin_path)
         # 重命名移动后的目录
-        os.rename(os.path.join(plugin_path, 'LLOneBot-master'), os.path.join(plugin_path, 'pluginllonebot'))
+        os.rename(os.path.join(plugin_path), os.path.join(plugin_path, 'LLOneBot'))
     else:
         print("检测到已安装LLOneBot，不再重新安装")
-
 
 def prepare_for_installation(qq_exe_path):
     # 检测是否安装过旧版 Liteloader
