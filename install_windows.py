@@ -229,6 +229,7 @@ def download_and_install_plugin_store(file_path):
         os.rename(os.path.join(plugin_path, 'LiteLoaderQQNT-Plugin-Plugin-Store-master'), os.path.join(plugin_path, 'pluginStore'))
     else:
         print("检测到已安装插件商店，不再重新安装")
+
 def download_and_install_plugin_llonebot(file_path):
     # 获取Windows下的临时目录
     temp_dir = tempfile.gettempdir()
@@ -342,8 +343,9 @@ def main():
         download_and_install_liteloader(file_path)
         copy_old_files(file_path)
         patch_index_js(file_path)
-        print("LiteLoaderQQNT 安装完成！接下来进行插件商店安装")
+        print("LiteLoaderQQNT 安装完成！接下来进行插件商店及LLOneBot安装")
         download_and_install_plugin_store(file_path)
+        download_and_install_plugin_llonebot(file_path)
         # # 清理临时文件
         # shutil.rmtree(temp_dir)
 
