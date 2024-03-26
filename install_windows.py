@@ -229,6 +229,44 @@ def download_and_install_plugin_store(file_path):
         os.rename(os.path.join(plugin_path, 'LiteLoaderQQNT-Plugin-Plugin-Store-master'), os.path.join(plugin_path, 'pluginStore'))
     else:
         print("检测到已安装插件商店，不再重新安装")
+def download_and_install_plugin_llonebot(file_path):
+    # 获取Windows下的临时目录
+    temp_dir = tempfile.gettempdir()
+    print(f"临时目录：{temp_dir}")
+
+    print("正在拉取最新版本的LLOneBot…")
+    llonebot_zip_url = "https://github.com/LLOneBot/LLOneBot/releases/latest/download/LLOneBot.zip"
+    llonebot_zip_path = os.path.join(temp_dir, "LLOneBot.zip")
+    download_file(llonebot_zip_url, llonebot_zip_path, PROXY_URL)
+
+    shutil.unpack_archive(llonebot_zip_path, os.path.join(temp_dir, "LLOneBot"))
+
+    # 获取LITELOADERQQNT_PROFILE环境变量的值
+    lite_loader_profile = os.getenv('LITELOADERQQNT_PROFILE')
+
+    # 如果环境变量不存在，则使用默认路径
+    default_path = os.path.join(file_path, 'resources', 'app', 'LiteLoaderQQNT-main', 'plugins')
+    plugin_path = os.path.join(lite_loader_profile, 'plugins') if lite_loader_profile else default_path
+
+    existing_destination_path1 = os.path.join(plugin_path, 'LLOneBot-master')
+    existing_destination_path2 = os.path.join(plugin_path, 'pluginllonebot')
+
+    # 打印或使用 plugin_path 变量
+    print(f"你的插件路径是 {plugin_path}")
+
+    if not os.path.exists(existing_destination_path1) and not os.path.exists(existing_destination_path2):
+        # 创建目标文件夹
+        os.makedirs(plugin_path, exist_ok=True)
+        print(
+            f"Moving from: {os.path.join(temp_dir, 'LLOneBot', 'LLOneBot-master')}")
+        print(f"Moving to: {existing_destination_path2}")
+        shutil.move(
+            os.path.join(temp_dir, 'LLOneBot', 'LLOneBot-master'),
+            plugin_path)
+        # 重命名移动后的目录
+        os.rename(os.path.join(plugin_path, 'LLOneBot-master'), os.path.join(plugin_path, 'pluginllonebot'))
+    else:
+        print("检测到已安装LLOneBot，不再重新安装")
 
 
 def prepare_for_installation(qq_exe_path):
