@@ -521,6 +521,45 @@ def download_and_install_plugin_store():
         shutil.move(os.path.join(temp_dir, "list-viewer"), plugin_path)
     else:
         print("检测到已安装插件商店，不再重新安装")
+        
+def download_and_install_plugin_llonebot(file_path):
+    # 获取Windows下的临时目录
+    temp_dir = tempfile.gettempdir()
+    print(f"临时目录：{temp_dir}")
+    # 下载并解压LLOneBot
+    print("正在拉取最新版本的LLOneBot…")
+    # 指定LLOneBot的下载地址
+    llonebot_zip_url = "https://mirror.ghproxy.com/https://github.com/LLOneBot/LLOneBot/releases/latest/download/LLOneBot.zip"
+    # 下载并解压LLOneBot
+    llonebot_zip_path = os.path.join(temp_dir, "LLOneBot.zip")
+    download_file(llonebot_zip_url, llonebot_zip_path)
+    # 解压LLOneBot到临时目录的LLOneBot文件夹
+    print("正在解压LLOneBot…")
+    shutil.unpack_archive(llonebot_zip_path, os.path.join(temp_dir, "LLOneBot"))
+
+    # 获取LITELOADERQQNT_PROFILE环境变量的值
+    lite_loader_profile = os.getenv('LITELOADERQQNT_PROFILE')
+
+    # 如果环境变量不存在，则使用默认路径
+    default_path = os.path.join(file_path, 'resources', 'app', 'LiteLoaderQQNT-main', 'plugins')
+    plugin_path = os.path.join(lite_loader_profile, 'plugins') if lite_loader_profile else default_path
+
+    existing_destination_path1 = os.path.join(plugin_path, 'LLOneBot')
+
+    # 打印或使用 plugin_path 变量
+    print(f"你的插件路径是 {plugin_path}")
+    # 判断目标文件夹是否存在
+    if not os.path.exists(existing_destination_path1):
+        # 创建目标文件夹
+        os.makedirs(plugin_path, exist_ok=True)
+        print(
+            f"Moving from: {os.path.join(temp_dir, 'LLOneBot')}")
+        print(f"Moving to: {existing_destination_path1}")
+        shutil.move(
+            os.path.join(temp_dir, 'LLOneBot'),
+            plugin_path)
+    else:
+        print("检测到已安装LLOneBot，不再重新安装")
 
 
 def check_proxy(proxy):
@@ -614,6 +653,8 @@ def main():
         # print("LiteLoaderQQNT 安装完成！插件商店作者不维护删库了，安装到此结束")
         print("LiteLoaderQQNT 安装完成！接下来进行插件列表安装")
         download_and_install_plugin_store()
+        print("插件列表 安装完成！接下来进行llonebot安装")
+        download_and_install_plugin_llonebot(file_path)
 
         if not github_actions:
             print("如果安装过程中没有提示发生错误")
