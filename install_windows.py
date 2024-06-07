@@ -653,7 +653,7 @@ def main():
         # print("LiteLoaderQQNT 安装完成！插件商店作者不维护删库了，安装到此结束")
         print("LiteLoaderQQNT 安装完成！接下来进行插件列表安装")
         download_and_install_plugin_store()
-        print("插件列表 安装完成！接下来进行llonebot安装")
+        print("插件列表 安装完成！接下来进行llonebot的安装")
         download_and_install_plugin_llonebot(file_path)
 
         if not github_actions:
