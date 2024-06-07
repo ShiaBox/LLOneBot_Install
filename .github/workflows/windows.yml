@@ -75,9 +75,9 @@ jobs:
       id: check_release
       run: |
         if (gh release view "pro-release" > $null) {
-          echo "::set-output name=release_exists::true"
+          echo "release_exists=true" >>$GITHUB_OUTPUT
         } else {
-          echo "::set-output name=release_exists::false"
+          echo "release_exists=false" >>$GITHUB_OUTPUT
         }
       shell: pwsh
       env:
