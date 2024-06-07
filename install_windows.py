@@ -522,42 +522,61 @@ def download_and_install_plugin_store():
     else:
         print("检测到已安装插件商店，不再重新安装")
         
-def download_and_install_plugin_llonebot(file_path):
+def download_and_install_llob():
     # 获取Windows下的临时目录
     temp_dir = tempfile.gettempdir()
     print(f"临时目录：{temp_dir}")
-    # 下载并解压LLOneBot
+
     print("正在拉取最新版本的LLOneBot…")
-    # 指定LLOneBot的下载地址
-    llonebot_zip_url = "https://mirror.ghproxy.com/https://github.com/LLOneBot/LLOneBot/releases/latest/download/LLOneBot.zip"
-    # 下载并解压LLOneBot
-    llonebot_zip_path = os.path.join(temp_dir, "LLOneBot.zip")
-    download_file(llonebot_zip_url, llonebot_zip_path)
-    # 解压LLOneBot到临时目录的LLOneBot文件夹
-    print("正在解压LLOneBot…")
-    shutil.unpack_archive(llonebot_zip_path, os.path.join(temp_dir, "LLOneBot"))
+    try:
+        response = requests.get(
+            "https://api.github.com/repos/LLOneBot/LLOneBot/releases/latest",
+            timeout=10
+        )
+        response.raise_for_status()
+    except requests.RequestException as e:
+        print(f"获取最新版本信息失败: {e}")
+        return
+
+    latest_release = response.json()
+    tag_name = latest_release.get("tag_name")
+    if not tag_name:
+        print("未能从最新版本信息中获取 tag_name")
+        return
+
+    llob_zip_url = f"https://github.com/LLOneBot/LLOneBot/releases/download/{tag_name}/LLOneBot.zip"
+    llob_zip_path = os.path.join(temp_dir, "LLOneBot.zip")
+
+    try:
+        download_file(llob_zip_url, llob_zip_path)
+    except Exception as e:
+        print(f"下载文件失败: {e}")
+        return
+
+    try:
+        shutil.unpack_archive(llob_zip_path, os.path.join(temp_dir, "LLOneBot"))
+    except shutil.ReadError as e:
+        print(f"解压文件失败: {e}")
+        return
 
     # 获取LITELOADERQQNT_PROFILE环境变量的值
     lite_loader_profile = os.getenv('LITELOADERQQNT_PROFILE')
+    if not lite_loader_profile:
+        print("环境变量 LITELOADERQQNT_PROFILE 未设置")
+        return
 
-    # 如果环境变量不存在，则使用默认路径
-    default_path = os.path.join(file_path, 'resources', 'app', 'LiteLoaderQQNT-main', 'plugins')
-    plugin_path = os.path.join(lite_loader_profile, 'plugins') if lite_loader_profile else default_path
-
-    existing_destination_path1 = os.path.join(plugin_path, 'LLOneBot')
+    plugin_path = os.path.join(lite_loader_profile, 'plugins')
+    existing_destination_path = os.path.join(plugin_path, 'LLOneBot')
 
     # 打印或使用 plugin_path 变量
     print(f"你的插件路径是 {plugin_path}")
-    # 判断目标文件夹是否存在
-    if not os.path.exists(existing_destination_path1):
+
+    if not os.path.exists(existing_destination_path):
         # 创建目标文件夹
         os.makedirs(plugin_path, exist_ok=True)
-        print(
-            f"Moving from: {os.path.join(temp_dir, 'LLOneBot')}")
-        print(f"Moving to: {existing_destination_path1}")
-        shutil.move(
-            os.path.join(temp_dir, 'LLOneBot'),
-            plugin_path)
+        print(f"Moving from: {os.path.join(temp_dir, 'LLOneBot')}")
+        print(f"Moving to: {existing_destination_path}")
+        shutil.move(os.path.join(temp_dir, "LLOneBot"), plugin_path)
     else:
         print("检测到已安装LLOneBot，不再重新安装")
 
@@ -654,7 +673,7 @@ def main():
         print("LiteLoaderQQNT 安装完成！接下来进行插件列表安装")
         download_and_install_plugin_store()
         print("插件列表 安装完成！接下来进行llonebot安装")
-        download_and_install_plugin_llonebot(file_path)
+        download_and_install_llob()
 
         if not github_actions:
             print("如果安装过程中没有提示发生错误")
